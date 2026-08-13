@@ -1,5 +1,7 @@
-function App() {
-  return <h1 className="text-4xl font-bold">Projeto Piloto</h1>;
-}
+import { AppRoutes } from '../routes';
+
+export const App = () => {
+  return <AppRoutes />;
+};
 
 export default App;
