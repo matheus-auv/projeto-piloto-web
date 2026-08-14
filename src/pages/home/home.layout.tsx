@@ -1,25 +1,9 @@
 import { ResumoCard } from './components/resumo-card';
-
-const MOCK_RESUMOS = [
-  {
-    titulo: 'sei la',
-    conteudo: 'sei la sei la 1',
-  },
-  {
-    titulo: 'sei la',
-    conteudo: 'sei la sei la 2',
-  },
-  {
-    titulo: 'sei la',
-    conteudo: 'sei la sei la 3',
-  },
-  {
-    titulo: 'sei la',
-    conteudo: 'sei la sei la 4',
-  },
-];
+import { useResumosHook } from './home.hook';
 
 export const HomeLayout = () => {
+  const { resumos } = useResumosHook();
+
   return (
     <main className="min-h-screen p-8 bg-sky-50 text-slate-900">
       <header className="mx-auto w-full max-w-300">
@@ -32,8 +16,12 @@ export const HomeLayout = () => {
         </div>
 
         <div className="grid grid-cols-3">
-          {MOCK_RESUMOS.map(resumo => (
-            <ResumoCard titulo={resumo.titulo} conteudo={resumo.conteudo} />
+          {resumos.map(resumo => (
+            <ResumoCard
+              key={resumo.id}
+              titulo={resumo.titulo}
+              conteudo={resumo.conteudo}
+            />
           ))}
         </div>
       </section>
