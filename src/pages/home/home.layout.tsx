@@ -6,7 +6,15 @@ import { ResumoFormModal } from './components/resumo-form-modal';
 import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const HomeLayout = () => {
-  const { resumos, salvarResumo, favoritar, isSubmitting } = useResumosHook();
+  const {
+    resumos,
+    pagination,
+    salvarResumo,
+    favoritar,
+    irParaPagina,
+    isLoading,
+    isSubmitting,
+  } = useResumosHook();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const closeModal = () => {
@@ -44,17 +52,50 @@ export const HomeLayout = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-3">
-          {resumos.map(resumo => (
-            <ResumoCard
-              key={resumo.id}
-              titulo={resumo.titulo}
-              conteudo={resumo.conteudo}
-              favorito={resumo.favorito}
-              onFavoritar={() => handleFavorito(resumo.id)}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <p>Carregando resumos...</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-3">
+              {resumos.map((resumo, index) => (
+                <ResumoCard
+                  key={resumo.id}
+                  titulo={resumo.titulo}
+                  conteudo={resumo.conteudo}
+                  favorito={resumo.favorito}
+                  isLastColumn={index % 3 === 2}
+                  onFavoritar={() => handleFavorito(resumo.id)}
+                />
+              ))}
+            </div>
+
+            {pagination && pagination.totalPages > 1 && (
+              <nav className="mt-8 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => irParaPagina(pagination.number - 1)}
+                  disabled={pagination.first}
+                  className="rounded bg-sky-600 px-4 py-2 font-semibold text-white hover:cursor-pointer hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Anterior
+                </button>
+
+                <span>
+                  Página {pagination.number + 1} de {pagination.totalPages}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => irParaPagina(pagination.number + 1)}
+                  disabled={pagination.last}
+                  className="rounded bg-sky-600 px-4 py-2 font-semibold text-white hover:cursor-pointer hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Próxima
+                </button>
+              </nav>
+            )}
+          </>
+        )}
       </section>
 
       {isModalOpen && (
