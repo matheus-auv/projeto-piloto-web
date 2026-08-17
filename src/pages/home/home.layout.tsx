@@ -60,11 +60,11 @@ export const HomeLayout = () => {
               {resumos.map((resumo, index) => (
                 <ResumoCard
                   key={resumo.id}
+                  id={resumo.id}
                   titulo={resumo.titulo}
                   conteudo={resumo.conteudo}
                   favorito={resumo.favorito}
                   isLastColumn={index % 3 === 2}
-                  onFavoritar={() => handleFavorito(resumo.id)}
                 />
               ))}
             </div>

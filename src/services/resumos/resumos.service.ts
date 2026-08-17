@@ -17,6 +17,10 @@ const resumosService = {
     const res = await api.post<Resumo>('/resumos', data);
     return res.data;
   },
+  findById: async (id: string): Promise<Resumo> => {
+    const res = await api.get<Resumo>(`/api/resumos/${id}`);
+    return res.data;
+  },
 };
 
 export default resumosService;
