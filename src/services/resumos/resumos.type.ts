@@ -2,7 +2,8 @@ export interface Resumo {
   id: string;
   titulo: string;
   conteudo: string;
-  dt_criacao: string;
+  dataCriacao: string;
+  favorito: boolean;
 }
 
 export type Resumos = Resumo[];

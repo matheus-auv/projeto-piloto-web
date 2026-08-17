@@ -6,7 +6,7 @@ import { ResumoFormModal } from './components/resumo-form-modal';
 import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const HomeLayout = () => {
-  const { resumos, salvarResumo, isSubmitting } = useResumosHook();
+  const { resumos, salvarResumo, favoritar, isSubmitting } = useResumosHook();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const closeModal = () => {
@@ -16,10 +16,14 @@ export const HomeLayout = () => {
   };
 
   const handleSubmit = async (data: ResumoFormData) => {
-    const salvo = await salvarResumo(data);
-    if (salvo) {
+    const resumo = await salvarResumo(data);
+    if (resumo) {
       setIsModalOpen(false);
     }
+  };
+
+  const handleFavorito = async (resumoId: string) => {
+    await favoritar(resumoId);
   };
 
   return (
@@ -46,6 +50,8 @@ export const HomeLayout = () => {
               key={resumo.id}
               titulo={resumo.titulo}
               conteudo={resumo.conteudo}
+              favorito={resumo.favorito}
+              onFavoritar={() => handleFavorito(resumo.id)}
             />
           ))}
         </div>
