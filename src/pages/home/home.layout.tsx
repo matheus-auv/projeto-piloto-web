@@ -3,6 +3,7 @@ import { ResumoCard } from './components/resumo-card';
 import { useResumosHook } from './home.hook';
 import { useState } from 'react';
 import { ResumoFormModal } from './components/resumo-form-modal';
+import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const HomeLayout = () => {
   const { resumos, salvarResumo, isSubmitting } = useResumosHook();
@@ -14,7 +15,7 @@ export const HomeLayout = () => {
     }
   };
 
-  const handleSubmit = async (data: Parameters<typeof salvarResumo>[0]) => {
+  const handleSubmit = async (data: ResumoFormData) => {
     const salvo = await salvarResumo(data);
     if (salvo) {
       setIsModalOpen(false);
