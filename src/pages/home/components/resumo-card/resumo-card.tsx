@@ -1,41 +1,42 @@
-import { StarIcon } from 'lucide-react';
+import { CalendarIcon, StarIcon } from 'lucide-react';
 import { Link } from 'react-router';
+import { formatarDataCriacao } from '../../../../utils/date';
 
 interface ResumoCardProps {
   id: string;
   titulo: string;
-  conteudo: string;
+  dataCriacao: string;
   favorito: boolean;
-  isLastColumn?: boolean;
 }
 
 export const ResumoCard = ({
   id,
   titulo,
-  conteudo,
+  dataCriacao,
   favorito,
-  isLastColumn = false,
 }: ResumoCardProps) => {
   return (
     <Link
       to={`/resumos/${id}`}
-      className={`relative my-4 w-full max-w-xs rounded-lg border-2 border-slate-400
-      bg-white p-6 shadow-sm transition hover:cursor-pointer hover:shadow-lg ${
-        isLastColumn ? '' : 'mr-4'
-      }`}
+      className="my-4 flex w-full max-w-64 flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:cursor-pointer hover:shadow-lg"
     >
-      <h1 className="flex justify-center text-center text-xl font-bold">
+      <div className="flex h-6">
+        <StarIcon
+          size={24}
+          className={
+            favorito ? 'fill-yellow-400 text-yellow-400' : 'text-transparent'
+          }
+        />
+      </div>
+
+      <h1 className="line-clamp-3 pt-4 text-center text-2xl font-bold">
         {titulo}
       </h1>
 
-      <StarIcon
-        className={
-          favorito
-            ? 'fill-yellow-400 text-yellow-400 absolute top-4 right-4'
-            : 'absolute top-4 right-4 text-transparent'
-        }
-      />
-      <p className="mt-4 line-clamp-5">{conteudo}</p>
+      <p className="mt-auto flex items-center justify-center pt-6 text-center text-base font-semibold text-slate-500">
+        <CalendarIcon size={18} className="mr-2" />
+        {formatarDataCriacao(dataCriacao)}
+      </p>
     </Link>
   );
 };

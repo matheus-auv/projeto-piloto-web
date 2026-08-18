@@ -30,7 +30,7 @@ export const ResumoViewLayout = () => {
               <button
                 type="button"
                 onClick={favoritar}
-                className="mt-1 p-1 text-yellow-400"
+                className="mt-1 p-1 text-yellow-400 hover:cursor-pointer"
               >
                 <Star
                   size={30}

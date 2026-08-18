@@ -51,15 +51,14 @@ export const HomeLayout = () => {
           <p>Carregando resumos...</p>
         ) : (
           <>
-            <div className="grid grid-cols-3">
-              {resumos.map((resumo, index) => (
+            <div className="grid grid-cols-4 gap-6">
+              {resumos.map(resumo => (
                 <ResumoCard
                   key={resumo.id}
                   id={resumo.id}
                   titulo={resumo.titulo}
-                  conteudo={resumo.conteudo}
+                  dataCriacao={resumo.dataCriacao}
                   favorito={resumo.favorito}
-                  isLastColumn={index % 3 === 2}
                 />
               ))}
             </div>
