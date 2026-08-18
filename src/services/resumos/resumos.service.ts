@@ -18,7 +18,7 @@ const resumosService = {
     return res.data;
   },
   findById: async (id: string): Promise<Resumo> => {
-    const res = await api.get<Resumo>(`/api/resumos/${id}`);
+    const res = await api.get<Resumo>(`/resumos/${id}`);
     return res.data;
   },
 };

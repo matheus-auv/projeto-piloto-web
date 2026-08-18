@@ -6,7 +6,6 @@ const resumosFavoritosService = {
     const res = await api.post<ResumoFavorito>(
       `/resumos/${resumoId}/favoritos`
     );
-    console.log(res.data);
     return res.data;
   },
 };

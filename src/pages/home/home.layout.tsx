@@ -10,7 +10,6 @@ export const HomeLayout = () => {
     resumos,
     pagination,
     salvarResumo,
-    favoritar,
     irParaPagina,
     isLoading,
     isSubmitting,
@@ -28,10 +27,6 @@ export const HomeLayout = () => {
     if (resumo) {
       setIsModalOpen(false);
     }
-  };
-
-  const handleFavorito = async (resumoId: string) => {
-    await favoritar(resumoId);
   };
 
   return (
