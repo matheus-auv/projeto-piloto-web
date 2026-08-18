@@ -2,7 +2,7 @@ import { PlusCircle } from 'lucide-react';
 import { ResumoCard } from './components/resumo-card';
 import { useResumosHook } from './home.hook';
 import { useState } from 'react';
-import { ResumoFormModal } from './components/resumo-form-modal';
+import { ResumoFormModal } from '../../components/resumo-form-modal/resumo-form-modal.layout';
 import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const HomeLayout = () => {

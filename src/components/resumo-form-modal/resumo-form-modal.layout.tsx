@@ -1,11 +1,5 @@
 import { useState } from 'react';
-import type { ResumoFormData } from '../../../../services/resumos/resumos.service';
-
-interface ResumoFormModalProps {
-  isSubmitting: boolean;
-  onClose: () => void;
-  onSubmit: (data: ResumoFormData) => Promise<void>;
-}
+import type { ResumoFormModalProps } from './resumo-form-modal.type';
 
 export const ResumoFormModal = ({
   isSubmitting,
