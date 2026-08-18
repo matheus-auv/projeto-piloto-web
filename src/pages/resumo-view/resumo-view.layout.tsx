@@ -1,10 +1,81 @@
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Pencil, PlusCircle, Star, Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { useResumoHook } from './resumo-view.hook';
 import DOMPurify from 'dompurify';
-
+import { useState } from 'react';
+import { ResumoFormModal } from '../home/components/resumo-form-modal';
+import type { ResumoFormData } from '../../services/resumos/resumos.service';
+import type { AnotacaoFormData } from '../../services/anotacoes/anotacoes.service';
+import type { Anotacao } from '../../services/anotacoes/anotacoes.type';
+import { formatarDataCriacao } from '../../utils/date';
+import { ConfirmModal } from './components/confirm-modal';
 export const ResumoViewLayout = () => {
-  const { resumo, favoritar } = useResumoHook();
+  const {
+    resumo,
+    anotacoes,
+    favoritar,
+    salvarAnotacao,
+    isSubmittingAnotacao,
+    editarAnotacao,
+    excluirAnotacao,
+    favoritarAnotacao,
+    isDeletingAnotacao,
+  } = useResumoHook();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [anotacaoEmEdicao, setAnotacaoEmEdicao] = useState<string | null>(null);
+  const [anotacaoParaExcluir, setAnotacaoParaExcluir] =
+    useState<Anotacao | null>(null);
+  const [mensagem, setMensagem] = useState<{
+    tipo: 'sucesso' | 'erro';
+    texto: string;
+  } | null>(null);
+
+  const fecharModal = () => {
+    if (!isSubmittingAnotacao) {
+      setIsModalOpen(false);
+      setAnotacaoEmEdicao(null);
+    }
+  };
+
+  const handleSubmit = async (data: ResumoFormData) => {
+    if (anotacaoEmEdicao) {
+      const updated = await editarAnotacao(
+        anotacaoEmEdicao,
+        data.conteudo.trim()
+      );
+      setMensagem({
+        tipo: updated ? 'sucesso' : 'erro',
+        texto: updated
+          ? 'Anotação atualizada com sucesso.'
+          : 'Não foi possível atualizar a anotação.',
+      });
+      setAnotacaoEmEdicao(null);
+      setIsModalOpen(false);
+      return;
+    }
+
+    const anotacaoData: AnotacaoFormData = { texto: data.conteudo };
+    const saved = await salvarAnotacao(anotacaoData);
+    if (saved) setIsModalOpen(false);
+  };
+
+  const abrirEdicao = (anotacao: { id: string }) => {
+    setAnotacaoEmEdicao(anotacao.id);
+    setIsModalOpen(true);
+  };
+
+  const confirmarExclusao = async () => {
+    if (!anotacaoParaExcluir) return;
+
+    const deleted = await excluirAnotacao(anotacaoParaExcluir.id);
+    setMensagem({
+      tipo: deleted ? 'sucesso' : 'erro',
+      texto: deleted
+        ? 'Anotação excluída com sucesso.'
+        : 'Não foi possível excluir a anotação.',
+    });
+    setAnotacaoParaExcluir(null);
+  };
 
   if (!resumo) {
     return (
@@ -51,14 +122,105 @@ export const ResumoViewLayout = () => {
         </article>
 
         <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm w-90">
-          <h2 className="text-lg font-semibold text-slate-600">
-            Minhas Anotações
-          </h2>
-          <div className="flex min-h-36 items-center justify-center text-center text-sm text-slate-400">
-            Suas anotações aparecerão aqui.
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-slate-600">
+              Minhas Anotações
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                setAnotacaoEmEdicao(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center rounded bg-sky-600 px-3 py-2 text-sm font-semibold text-white hover:cursor-pointer hover:bg-sky-700"
+            >
+              <PlusCircle size={18} className="mr-2" />
+              Adicionar
+            </button>
+          </div>
+          {mensagem && (
+            <p
+              className={`mt-4 rounded p-3 text-sm ${
+                mensagem.tipo === 'sucesso'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              }`}
+            >
+              {mensagem.texto}
+            </p>
+          )}
+          <div className="mt-4 space-y-3">
+            {anotacoes.length === 0 ? (
+              <p className="flex min-h-28 items-center justify-center text-center text-sm text-slate-400">
+                Suas anotações aparecerão aqui.
+              </p>
+            ) : (
+              anotacoes.map(anotacao => (
+                <div key={anotacao.id} className="rounded border border-slate-200 bg-slate-50 p-3">
+                  <p
+                    className="text-sm">
+                    {anotacao.texto}
+                  </p>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <small className="text-slate-500">
+                      {formatarDataCriacao(anotacao.dataCriacao)}
+                    </small>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        title={anotacao.favorita ? 'Desfavoritar' : 'Favoritar'}
+                        onClick={() => favoritarAnotacao(anotacao.id)}
+                        className="rounded p-1 text-yellow-500 hover:bg-yellow-100"
+                      >
+                        <Star size={16} className={anotacao.favorita ? 'fill-yellow-400' : ''} />
+                      </button>
+                      <button
+                        type="button"
+                        title="Editar anotação"
+                        onClick={() => abrirEdicao(anotacao)}
+                        className="rounded p-1 text-slate-500 hover:bg-slate-200"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        title="Excluir anotação"
+                        onClick={() => {
+                          setMensagem(null);
+                          setAnotacaoParaExcluir(anotacao);
+                        }}
+                        className="rounded p-1 text-red-500 hover:bg-red-100"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </aside>
       </div>
+      {isModalOpen && (
+        <ResumoFormModal
+          mode="anotacao"
+          initialContent={
+            anotacaoEmEdicao
+              ? anotacoes.find(anotacao => anotacao.id === anotacaoEmEdicao)?.texto
+              : ''
+          }
+          isSubmitting={isSubmittingAnotacao}
+          onClose={fecharModal}
+          onSubmit={handleSubmit}
+        />
+      )}
+      {anotacaoParaExcluir !== null && (
+        <ConfirmModal
+          isSubmitting={isDeletingAnotacao}
+          onCancel={() => setAnotacaoParaExcluir(null)}
+          onConfirm={confirmarExclusao}
+        />
+      )}
     </main>
   );
 };

@@ -3,10 +3,16 @@ import type { Resumo } from '../../services/resumos/resumos.type';
 import resumosService from '../../services/resumos/resumos.service';
 import resumosFavoritosService from '../../services/resumos-favoritos/resumos-favoritos.service';
 import { useParams } from 'react-router';
+import anotacoesService from '../../services/anotacoes/anotacoes.service';
+import type { Anotacoes } from '../../services/anotacoes/anotacoes.type';
+import type { AnotacaoFormData } from '../../services/anotacoes/anotacoes.service';
 
 export const useResumoHook = () => {
   const { id } = useParams<{ id: string }>();
   const [resumo, setResumo] = useState<Resumo | null>(null);
+  const [anotacoes, setAnotacoes] = useState<Anotacoes>([]);
+  const [isSubmittingAnotacao, setIsSubmittingAnotacao] = useState(false);
+  const [isDeletingAnotacao, setIsDeletingAnotacao] = useState(false);
 
   useEffect(() => {
     const buscarResumo = async () => {
@@ -17,6 +23,8 @@ export const useResumoHook = () => {
       try {
         const data = await resumosService.findById(id);
         setResumo(data);
+        const anotacoesData = await anotacoesService.getAll(id);
+        setAnotacoes(anotacoesData);
       } catch {
         console.log('Erro ao carregar resumo');
       }
@@ -24,6 +32,87 @@ export const useResumoHook = () => {
 
     buscarResumo();
   }, [id]);
+
+  const salvarAnotacao = async (data: AnotacaoFormData) => {
+    if (!id) return false;
+
+    setIsSubmittingAnotacao(true);
+    try {
+      const anotacao = await anotacoesService.create(id, data);
+      setAnotacoes(current => {
+        const atualizadas = [anotacao, ...current];
+
+        return atualizadas.sort(
+          (a, b) => Number(Boolean(b.favorita)) - Number(Boolean(a.favorita))
+        );
+      });
+      return true;
+    } catch {
+      console.log('Erro ao salvar anotação');
+      return false;
+    } finally {
+      setIsSubmittingAnotacao(false);
+    }
+  };
+
+  const editarAnotacao = async (anotacaoId: string, texto: string) => {
+    setIsSubmittingAnotacao(true);
+    try {
+      const anotacaoAtualizada = await anotacoesService.update(
+        anotacaoId,
+        texto
+      );
+      setAnotacoes(current =>
+        current.map(anotacao =>
+          anotacao.id === anotacaoId ? anotacaoAtualizada : anotacao
+        )
+      );
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setIsSubmittingAnotacao(false);
+    }
+  };
+
+  const excluirAnotacao = async (anotacaoId: string) => {
+    if (!id) return false;
+    console.log(anotacaoId);
+    setIsDeletingAnotacao(true);
+    try {
+      const deleted = await anotacoesService.delete(anotacaoId);
+      if (deleted) {
+        setAnotacoes(current =>
+          current.filter(anotacao => anotacao.id !== anotacaoId)
+        );
+      }
+      return deleted;
+    } catch {
+      return false;
+    } finally {
+      setIsDeletingAnotacao(false);
+    }
+  };
+
+  const favoritarAnotacao = async (anotacaoId: string) => {
+    try {
+      const data = await anotacoesService.toggleFavorite(anotacaoId);
+      setAnotacoes(current => {
+        const atualizadas = current.map(anotacao =>
+          anotacao.id === anotacaoId
+            ? { ...anotacao, favorita: data.favorito }
+            : anotacao
+        );
+
+        return atualizadas.sort(
+          (a, b) => Number(Boolean(b.favorita)) - Number(Boolean(a.favorita))
+        );
+      });
+      return data.favorito;
+    } catch {
+      return null;
+    }
+  };
 
   const favoritar = async () => {
     if (!resumo) {
@@ -44,6 +133,13 @@ export const useResumoHook = () => {
 
   return {
     resumo,
+    anotacoes,
     favoritar,
+    salvarAnotacao,
+    isSubmittingAnotacao,
+    editarAnotacao,
+    excluirAnotacao,
+    favoritarAnotacao,
+    isDeletingAnotacao,
   };
 };
