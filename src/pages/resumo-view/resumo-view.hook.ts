@@ -3,10 +3,13 @@ import type { Resumo } from '../../services/resumos/resumos.type';
 import resumosService from '../../services/resumos/resumos.service';
 import resumosFavoritosService from '../../services/resumos-favoritos/resumos-favoritos.service';
 import { useParams } from 'react-router';
+import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const useResumoHook = () => {
   const { id } = useParams<{ id: string }>();
   const [resumo, setResumo] = useState<Resumo | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const buscarResumo = async () => {
@@ -42,8 +45,29 @@ export const useResumoHook = () => {
     }
   };
 
+  const editarResumo = async (data: ResumoFormData) => {
+    if (!resumo) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const dataAtualizada = await resumosService.update(resumo.id, data);
+      setResumo(dataAtualizada);
+      setIsEditModalOpen(false);
+    } catch {
+      console.log('Erro ao atualizar resumo');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     resumo,
     favoritar,
+    editarResumo,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    isSubmitting,
   };
 };

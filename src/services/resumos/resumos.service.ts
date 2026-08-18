@@ -17,6 +17,10 @@ const resumosService = {
     const res = await api.post<Resumo>('/resumos', data);
     return res.data;
   },
+  update: async (id: string, data: ResumoFormData): Promise<Resumo> => {
+    const res = await api.put<Resumo>(`/resumos/${id}`, data);
+    return res.data;
+  },
   findById: async (id: string): Promise<Resumo> => {
     const res = await api.get<Resumo>(`/resumos/${id}`);
     return res.data;
