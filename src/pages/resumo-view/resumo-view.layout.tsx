@@ -1,4 +1,4 @@
-import { ArrowLeft, Pencil, Star } from 'lucide-react';
+import { ArrowLeft, Pencil, Star, Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 import { useResumoHook } from './resumo-view.hook';
 import DOMPurify from 'dompurify';
@@ -9,6 +9,7 @@ export const ResumoViewLayout = () => {
     resumo,
     favoritar,
     editarResumo,
+    excluirResumo,
     isEditModalOpen,
     setIsEditModalOpen,
     isSubmitting,
@@ -50,13 +51,32 @@ export const ResumoViewLayout = () => {
                   {resumo.titulo}
                 </h1>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="mt-1 rounded p-2 text-slate-600 hover:bg-gray-100 hover:text-sky-800 hover:cursor-pointer"
-              >
-                <Pencil size={24} />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(true)}
+                  disabled={isSubmitting}
+                  className="mt-1 rounded p-2 text-slate-600 hover:bg-gray-100 hover:text-yellow-800 hover:cursor-pointer"
+                >
+                  <Pencil size={24} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        'Deseja excluir este resumo? Todas as anotações vinculadas também serão excluídas.'
+                      )
+                    ) {
+                      void excluirResumo();
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="mt-1 rounded p-2 text-slate-600 hover:bg-gray-100 hover:text-red-800 hover:cursor-pointer"
+                >
+                  <Trash2 size={24} />
+                </button>
+              </div>
             </div>
             <div className="mb-10 h-0.5 bg-slate-800" />
             <div

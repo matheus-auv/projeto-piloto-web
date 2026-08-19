@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import type { Resumo } from '../../services/resumos/resumos.type';
 import resumosService from '../../services/resumos/resumos.service';
 import resumosFavoritosService from '../../services/resumos-favoritos/resumos-favoritos.service';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type { ResumoFormData } from '../../services/resumos/resumos.service';
 
 export const useResumoHook = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [resumo, setResumo] = useState<Resumo | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,10 +63,27 @@ export const useResumoHook = () => {
     }
   };
 
+  const excluirResumo = async () => {
+    if (!resumo) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await resumosService.delete(resumo.id);
+      navigate('/');
+    } catch {
+      console.log('Erro ao excluir resumo');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     resumo,
     favoritar,
     editarResumo,
+    excluirResumo,
     isEditModalOpen,
     setIsEditModalOpen,
     isSubmitting,
