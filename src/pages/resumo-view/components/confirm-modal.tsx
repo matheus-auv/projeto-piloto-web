@@ -1,17 +1,17 @@
 interface ConfirmModalProps {
-  description?: string;
+  descricao?: string;
   isSubmitting: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-  title?: string;
+  titulo?: string;
 }
 
 export const ConfirmModal = ({
-  description = 'Essa ação não poderá ser desfeita.',
+  descricao = 'Essa ação não poderá ser desfeita.',
   isSubmitting,
   onCancel,
   onConfirm,
-  title = 'Excluir anotação?',
+  titulo = 'Excluir anotação?',
 }: ConfirmModalProps) => {
   return (
     <div
@@ -23,12 +23,8 @@ export const ConfirmModal = ({
       }}
     >
       <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="text-xl font-bold text-slate-800">
-          {title}
-        </h2>
-        <p className="mt-2 text-sm text-slate-600">
-          {description}
-        </p>
+        <h2 className="text-xl font-bold text-slate-800">{titulo}</h2>
+        <p className="mt-2 text-sm text-slate-600">{descricao}</p>
         <div className="mt-6 flex justify-end gap-3">
           <button
             type="button"

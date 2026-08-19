@@ -189,11 +189,11 @@ export const ResumoViewLayout = () => {
               </p>
             ) : (
               anotacoes.map(anotacao => (
-                <div key={anotacao.id} className="rounded border border-slate-200 bg-slate-50 p-3">
-                  <p
-                    className="text-sm">
-                    {anotacao.texto}
-                  </p>
+                <div
+                  key={anotacao.id}
+                  className="rounded border border-slate-200 bg-slate-50 p-3"
+                >
+                  <p className="text-sm">{anotacao.texto}</p>
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <small className="text-slate-500">
                       {formatarDataCriacao(anotacao.dataCriacao)}
@@ -205,7 +205,10 @@ export const ResumoViewLayout = () => {
                         onClick={() => favoritarAnotacao(anotacao.id)}
                         className="rounded p-1 text-yellow-500 hover:bg-yellow-100"
                       >
-                        <Star size={16} className={anotacao.favorita ? 'fill-yellow-400' : ''} />
+                        <Star
+                          size={16}
+                          className={anotacao.favorita ? 'fill-yellow-400' : ''}
+                        />
                       </button>
                       <button
                         type="button"
@@ -251,7 +254,8 @@ export const ResumoViewLayout = () => {
           mode="anotacao"
           initialContent={
             anotacaoEmEdicao
-              ? anotacoes.find(anotacao => anotacao.id === anotacaoEmEdicao)?.texto
+              ? anotacoes.find(anotacao => anotacao.id === anotacaoEmEdicao)
+                  ?.texto
               : ''
           }
           isSubmitting={isSubmittingAnotacao}
@@ -259,6 +263,7 @@ export const ResumoViewLayout = () => {
           onSubmit={handleSubmit}
         />
       )}
+
       {anotacaoParaExcluir !== null && (
         <ConfirmModal
           isSubmitting={isDeletingAnotacao}
@@ -266,10 +271,11 @@ export const ResumoViewLayout = () => {
           onConfirm={confirmarExclusao}
         />
       )}
+
       {isResumoParaExcluir && (
         <ConfirmModal
-          title="Excluir resumo?"
-          description="Todas as anotações vinculadas também serão excluídas. Essa ação não poderá ser desfeita."
+          titulo="Excluir resumo?"
+          descricao="Todas as anotações vinculadas também serão excluídas."
           isSubmitting={isSubmitting}
           onCancel={() => setIsResumoParaExcluir(false)}
           onConfirm={confirmarExclusaoResumo}
