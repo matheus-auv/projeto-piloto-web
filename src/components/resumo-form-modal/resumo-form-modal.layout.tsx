@@ -3,11 +3,13 @@ import type { ResumoFormModalProps } from './resumo-form-modal.type';
 
 export const ResumoFormModal = ({
   isSubmitting,
+  initialData,
   onClose,
   onSubmit,
 }: ResumoFormModalProps) => {
-  const [titulo, setTitulo] = useState('');
-  const [conteudo, setConteudo] = useState('');
+  const [titulo, setTitulo] = useState(initialData?.titulo ?? '');
+  const [conteudo, setConteudo] = useState(initialData?.conteudo ?? '');
+  const isEditing = Boolean(initialData);
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,7 +30,7 @@ export const ResumoFormModal = ({
     >
       <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-xl">
         <h2 id="resumo-form-title" className="text-2xl font-bold">
-          Adicionar resumo
+          {isEditing ? 'Editar resumo' : 'Adicionar resumo'}
         </h2>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -68,7 +70,13 @@ export const ResumoFormModal = ({
               disabled={isSubmitting}
               className="rounded bg-sky-600 px-4 py-2 text-white font-semibold hover:bg-sky-700 hover:cursor-pointer disabled:opacity-50"
             >
-              {isSubmitting ? 'Salvando...' : 'Salvar'}
+              {isSubmitting
+                ? isEditing
+                  ? 'Atualizando...'
+                  : 'Salvando...'
+                : isEditing
+                  ? 'Atualizar'
+                  : 'Salvar'}
             </button>
           </div>
         </form>

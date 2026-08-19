@@ -32,28 +32,17 @@ export const useResumosHook = () => {
   const salvarResumo = async (data: ResumoFormData) => {
     setIsSubmitting(true);
     try {
-      const resumo = await resumosService.create(data);
+      await resumosService.create(data);
       if (page === 0) {
-        setResumos(current => {
-          const pageSize = pagination?.size ?? 20;
-
-          if (current.length >= pageSize) {
-            return current;
-          }
-
-          return [{ ...resumo, favorito: false }, ...current];
-        });
-        setPagination(current =>
-          current
-            ? {
-                ...current,
-                totalElements: current.totalElements + 1,
-                totalPages: Math.ceil(
-                  (current.totalElements + 1) / current.size
-                ),
-              }
-            : current
-        );
+        // Busca novamente a página para usar exatamente o objeto devolvido
+        // pelo backend, incluindo id e dataCriacao.
+        try {
+          const paginaAtualizada = await resumosService.getAll(0);
+          setResumos(paginaAtualizada.content ?? []);
+          setPagination(paginaAtualizada);
+        } catch {
+          console.log('Resumo salvo, mas não foi possível atualizar a lista');
+        }
       } else {
         setPage(0);
       }
