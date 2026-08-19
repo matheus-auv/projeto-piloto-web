@@ -6,5 +6,5 @@ export interface ResumoFormModalProps {
   initialContent?: string;
   mode?: 'resumo' | 'anotacao';
   onClose: () => void;
-  onSubmit: (data: ResumoFormData) => Promise<void>;
+  onSubmit: (data: ResumoFormData) => Promise<void | boolean>;
 }

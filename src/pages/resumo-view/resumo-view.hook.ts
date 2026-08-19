@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import type { Resumo } from '../../services/resumos/resumos.type';
 import resumosService from '../../services/resumos/resumos.service';
 import resumosFavoritosService from '../../services/resumos-favoritos/resumos-favoritos.service';
@@ -137,7 +138,7 @@ export const useResumoHook = () => {
 
   const editarResumo = async (data: ResumoFormData) => {
     if (!resumo) {
-      return;
+      return false;
     }
 
     setIsSubmitting(true);
@@ -145,8 +146,11 @@ export const useResumoHook = () => {
       const dataAtualizada = await resumosService.update(resumo.id, data);
       setResumo(dataAtualizada);
       setIsEditModalOpen(false);
+      toast.success('Resumo atualizado com sucesso.');
+      return true;
     } catch {
       console.log('Erro ao atualizar resumo');
+      return false;
     } finally {
       setIsSubmitting(false);
     }
@@ -160,6 +164,7 @@ export const useResumoHook = () => {
     setIsSubmitting(true);
     try {
       await resumosService.delete(resumo.id);
+      toast.success('Resumo excluído com sucesso.');
       navigate('/');
       return true;
     } catch {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import resumosService, {
   type ResumoFormData,
 } from '../../services/resumos/resumos.service';
@@ -46,6 +47,7 @@ export const useResumosHook = () => {
       } else {
         setPage(0);
       }
+      toast.success('Resumo adicionado com sucesso.');
       return true;
     } catch {
       console.log('Erro ao salvar resumo');
