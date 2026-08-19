@@ -1,6 +1,6 @@
 export const formatarDataCriacao = (dataCriacao?: string) => {
   if (!dataCriacao) {
-    return 'Data indisponível';
+    return '';
   }
 
   const match = dataCriacao.match(

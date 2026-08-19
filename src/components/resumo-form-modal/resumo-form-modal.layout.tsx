@@ -6,15 +6,20 @@ export const ResumoFormModal = ({
   initialData,
   onClose,
   onSubmit,
+  mode = 'resumo',
+  initialContent = '',
 }: ResumoFormModalProps) => {
   const [titulo, setTitulo] = useState(initialData?.titulo ?? '');
-  const [conteudo, setConteudo] = useState(initialData?.conteudo ?? '');
+  const [conteudo, setConteudo] = useState(
+    initialData?.conteudo ?? initialContent
+  );
   const isEditing = Boolean(initialData);
+  const isAnotacao = mode === 'anotacao';
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     await onSubmit({
-      titulo: titulo.trim(),
+      titulo: isAnotacao ? 'Anotação' : titulo.trim(),
       conteudo: conteudo.trim(),
     });
   };
@@ -30,24 +35,33 @@ export const ResumoFormModal = ({
     >
       <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-xl">
         <h2 id="resumo-form-title" className="text-2xl font-bold">
-          {isEditing ? 'Editar resumo' : 'Adicionar resumo'}
+          {isAnotacao
+            ? 'Adicionar anotação'
+            : isEditing
+              ? 'Editar resumo'
+              : 'Adicionar resumo'}
         </h2>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-          <label className="block">
-            <span className="mb-1 block font-bold">Título</span>
-            <input
-              autoFocus
-              required
-              value={titulo}
-              onChange={event => setTitulo(event.target.value)}
-              className="w-full rounded border-2 border-slate-300 p-2 outline-none focus:border-sky-500"
-            />
-          </label>
+          {!isAnotacao && (
+            <label className="block">
+              <span className="mb-1 block font-bold">Título</span>
+              <input
+                autoFocus
+                required
+                value={titulo}
+                onChange={event => setTitulo(event.target.value)}
+                className="w-full rounded border-2 border-slate-300 p-2 outline-none focus:border-sky-500"
+              />
+            </label>
+          )}
 
           <label className="block">
-            <span className="mb-1 block font-bold">Conteúdo</span>
+            <span className="mb-1 block font-bold">
+              {isAnotacao ? 'Anotação' : 'Conteúdo'}
+            </span>
             <textarea
+              autoFocus={isAnotacao}
               required
               rows={6}
               value={conteudo}
