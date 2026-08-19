@@ -51,6 +51,7 @@ export const useResumoHook = () => {
           (a, b) => Number(Boolean(b.favorita)) - Number(Boolean(a.favorita))
         );
       });
+      toast.success('Anotação adicionada com sucesso.');
       return true;
     } catch {
       console.log('Erro ao salvar anotação');
@@ -72,6 +73,7 @@ export const useResumoHook = () => {
           anotacao.id === anotacaoId ? anotacaoAtualizada : anotacao
         )
       );
+      toast.success('Anotação atualizada com sucesso.');
       return true;
     } catch {
       return false;
@@ -90,6 +92,7 @@ export const useResumoHook = () => {
         setAnotacoes(current =>
           current.filter(anotacao => anotacao.id !== anotacaoId)
         );
+        toast.success('Anotação excluída com sucesso.');
       }
       return deleted;
     } catch {

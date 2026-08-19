@@ -31,10 +31,6 @@ export const ResumoViewLayout = () => {
   const [anotacaoParaExcluir, setAnotacaoParaExcluir] =
     useState<Anotacao | null>(null);
   const [isResumoParaExcluir, setIsResumoParaExcluir] = useState(false);
-  const [mensagem, setMensagem] = useState<{
-    tipo: 'sucesso' | 'erro';
-    texto: string;
-  } | null>(null);
 
   const fecharModal = () => {
     if (!isSubmittingAnotacao) {
@@ -45,16 +41,10 @@ export const ResumoViewLayout = () => {
 
   const handleSubmit = async (data: ResumoFormData) => {
     if (anotacaoEmEdicao) {
-      const updated = await editarAnotacao(
+      await editarAnotacao(
         anotacaoEmEdicao,
         data.conteudo.trim()
       );
-      setMensagem({
-        tipo: updated ? 'sucesso' : 'erro',
-        texto: updated
-          ? 'Anotação atualizada com sucesso.'
-          : 'Não foi possível atualizar a anotação.',
-      });
       setAnotacaoEmEdicao(null);
       setIsModalOpen(false);
       return;
@@ -73,13 +63,7 @@ export const ResumoViewLayout = () => {
   const confirmarExclusao = async () => {
     if (!anotacaoParaExcluir) return;
 
-    const deleted = await excluirAnotacao(anotacaoParaExcluir.id);
-    setMensagem({
-      tipo: deleted ? 'sucesso' : 'erro',
-      texto: deleted
-        ? 'Anotação excluída com sucesso.'
-        : 'Não foi possível excluir a anotação.',
-    });
+    await excluirAnotacao(anotacaoParaExcluir.id);
     setAnotacaoParaExcluir(null);
   };
 
@@ -115,7 +99,7 @@ export const ResumoViewLayout = () => {
                 <button
                   type="button"
                   onClick={favoritar}
-                  className="mt-1 p-1 text-yellow-400 hover:cursor-pointer"
+                  className="mt-1 p-1 rounded text-yellow-400 hover:bg-yellow-50 hover:cursor-pointer"
                 >
                   <Star
                     size={30}
@@ -171,17 +155,6 @@ export const ResumoViewLayout = () => {
               Adicionar
             </button>
           </div>
-          {mensagem && (
-            <p
-              className={`mt-4 rounded p-3 text-sm ${
-                mensagem.tipo === 'sucesso'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
-              }`}
-            >
-              {mensagem.texto}
-            </p>
-          )}
           <div className="mt-4 space-y-3">
             {anotacoes.length === 0 ? (
               <p className="flex min-h-28 items-center justify-center text-center text-sm text-slate-400">
@@ -212,20 +185,17 @@ export const ResumoViewLayout = () => {
                       </button>
                       <button
                         type="button"
-                        title="Editar anotação"
                         onClick={() => abrirEdicao(anotacao)}
-                        className="rounded p-1 text-slate-500 hover:bg-slate-200"
+                        className="rounded p-1 text-slate-500 hover:bg-gray-100 hover:text-yellow-800"
                       >
                         <Pencil size={16} />
                       </button>
                       <button
                         type="button"
-                        title="Excluir anotação"
                         onClick={() => {
-                          setMensagem(null);
                           setAnotacaoParaExcluir(anotacao);
                         }}
-                        className="rounded p-1 text-red-500 hover:bg-red-100"
+                        className="rounded p-1 text-slate-500 hover:bg-gray-100 hover:text-red-800"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -237,6 +207,7 @@ export const ResumoViewLayout = () => {
           </div>
         </aside>
       </div>
+
       {isEditModalOpen && (
         <ResumoFormModal
           isSubmitting={isSubmitting}
